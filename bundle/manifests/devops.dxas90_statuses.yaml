@@ -1,0 +1,799 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.4.1
+  creationTimestamp: null
+  name: statuses.devops.dxas90
+spec:
+  group: devops.dxas90
+  names:
+    kind: Status
+    listKind: StatusList
+    plural: statuses
+    singular: status
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Status is the Schema for the statuses API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: StatusSpec defines the desired state of Status
+            properties:
+              image:
+                description: Image to deploy
+                type: string
+              replicas:
+                description: Replicas that we need
+                format: int32
+                type: integer
+            type: object
+          status:
+            description: StatusStatus defines the observed state of Status
+            properties:
+              currentStatus:
+                type: string
+              deploymentStatus:
+                description: Status of the Status Deployment created and managed by
+                  it
+                properties:
+                  availableReplicas:
+                    description: Total number of available pods (ready for at least
+                      minReadySeconds) targeted by this deployment.
+                    format: int32
+                    type: integer
+                  collisionCount:
+                    description: Count of hash collisions for the Deployment. The
+                      Deployment controller uses this field as a collision avoidance
+                      mechanism when it needs to create the name for the newest ReplicaSet.
+                    format: int32
+                    type: integer
+                  conditions:
+                    description: Represents the latest available observations of a
+                      deployment's current state.
+                    items:
+                      description: DeploymentCondition describes the state of a deployment
+                        at a certain point.
+                      properties:
+                        lastTransitionTime:
+                          description: Last time the condition transitioned from one
+                            status to another.
+                          format: date-time
+                          type: string
+                        lastUpdateTime:
+                          description: The last time this condition was updated.
+                          format: date-time
+                          type: string
+                        message:
+                          description: A human readable message indicating details
+                            about the transition.
+                          type: string
+                        reason:
+                          description: The reason for the condition's last transition.
+                          type: string
+                        status:
+                          description: Status of the condition, one of True, False,
+                            Unknown.
+                          type: string
+                        type:
+                          description: Type of deployment condition.
+                          type: string
+                      required:
+                      - status
+                      - type
+                      type: object
+                    type: array
+                  observedGeneration:
+                    description: The generation observed by the deployment controller.
+                    format: int64
+                    type: integer
+                  readyReplicas:
+                    description: Total number of ready pods targeted by this deployment.
+                    format: int32
+                    type: integer
+                  replicas:
+                    description: Total number of non-terminated pods targeted by this
+                      deployment (their labels match the selector).
+                    format: int32
+                    type: integer
+                  unavailableReplicas:
+                    description: Total number of unavailable pods targeted by this
+                      deployment. This is the total number of pods that are still
+                      required for the deployment to have 100% available capacity.
+                      They may either be pods that are running but not yet available
+                      or pods that still have not been created.
+                    format: int32
+                    type: integer
+                  updatedReplicas:
+                    description: Total number of non-terminated pods targeted by this
+                      deployment that have the desired template spec.
+                    format: int32
+                    type: integer
+                type: object
+              hpaStatus:
+                description: Status of the Status Service created and managed by it
+                properties:
+                  conditions:
+                    description: conditions is the set of conditions required for
+                      this autoscaler to scale its target, and indicates whether or
+                      not those conditions are met.
+                    items:
+                      description: HorizontalPodAutoscalerCondition describes the
+                        state of a HorizontalPodAutoscaler at a certain point.
+                      properties:
+                        lastTransitionTime:
+                          description: lastTransitionTime is the last time the condition
+                            transitioned from one status to another
+                          format: date-time
+                          type: string
+                        message:
+                          description: message is a human-readable explanation containing
+                            details about the transition
+                          type: string
+                        reason:
+                          description: reason is the reason for the condition's last
+                            transition.
+                          type: string
+                        status:
+                          description: status is the status of the condition (True,
+                            False, Unknown)
+                          type: string
+                        type:
+                          description: type describes the current condition
+                          type: string
+                      required:
+                      - status
+                      - type
+                      type: object
+                    type: array
+                  currentMetrics:
+                    description: currentMetrics is the last read state of the metrics
+                      used by this autoscaler.
+                    items:
+                      description: MetricStatus describes the last-read state of a
+                        single metric.
+                      properties:
+                        containerResource:
+                          description: container resource refers to a resource metric
+                            (such as those specified in requests and limits) known
+                            to Kubernetes describing a single container in each pod
+                            in the current scale target (e.g. CPU or memory). Such
+                            metrics are built in to Kubernetes, and have special scaling
+                            options on top of those available to normal per-pod metrics
+                            using the "pods" source.
+                          properties:
+                            container:
+                              description: Container is the name of the container
+                                in the pods of the scaling target
+                              type: string
+                            current:
+                              description: current contains the current value for
+                                the given metric
+                              properties:
+                                averageUtilization:
+                                  description: currentAverageUtilization is the current
+                                    value of the average of the resource metric across
+                                    all relevant pods, represented as a percentage
+                                    of the requested value of the resource for the
+                                    pods.
+                                  format: int32
+                                  type: integer
+                                averageValue:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  description: averageValue is the current value of
+                                    the average of the metric across all relevant
+                                    pods (as a quantity)
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                value:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  description: value is the current value of the metric
+                                    (as a quantity).
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                              type: object
+                            name:
+                              description: Name is the name of the resource in question.
+                              type: string
+                          required:
+                          - container
+                          - current
+                          - name
+                          type: object
+                        external:
+                          description: external refers to a global metric that is
+                            not associated with any Kubernetes object. It allows autoscaling
+                            based on information coming from components running outside
+                            of cluster (for example length of queue in cloud messaging
+                            service, or QPS from loadbalancer running outside of cluster).
+                          properties:
+                            current:
+                              description: current contains the current value for
+                                the given metric
+                              properties:
+                                averageUtilization:
+                                  description: currentAverageUtilization is the current
+                                    value of the average of the resource metric across
+                                    all relevant pods, represented as a percentage
+                                    of the requested value of the resource for the
+                                    pods.
+                                  format: int32
+                                  type: integer
+                                averageValue:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  description: averageValue is the current value of
+                                    the average of the metric across all relevant
+                                    pods (as a quantity)
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                value:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  description: value is the current value of the metric
+                                    (as a quantity).
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                              type: object
+                            metric:
+                              description: metric identifies the target metric by
+                                name and selector
+                              properties:
+                                name:
+                                  description: name is the name of the given metric
+                                  type: string
+                                selector:
+                                  description: selector is the string-encoded form
+                                    of a standard kubernetes label selector for the
+                                    given metric When set, it is passed as an additional
+                                    parameter to the metrics server for more specific
+                                    metrics scoping. When unset, just the metricName
+                                    will be used to gather metrics.
+                                  properties:
+                                    matchExpressions:
+                                      description: matchExpressions is a list of label
+                                        selector requirements. The requirements are
+                                        ANDed.
+                                      items:
+                                        description: A label selector requirement
+                                          is a selector that contains values, a key,
+                                          and an operator that relates the key and
+                                          values.
+                                        properties:
+                                          key:
+                                            description: key is the label key that
+                                              the selector applies to.
+                                            type: string
+                                          operator:
+                                            description: operator represents a key's
+                                              relationship to a set of values. Valid
+                                              operators are In, NotIn, Exists and
+                                              DoesNotExist.
+                                            type: string
+                                          values:
+                                            description: values is an array of string
+                                              values. If the operator is In or NotIn,
+                                              the values array must be non-empty.
+                                              If the operator is Exists or DoesNotExist,
+                                              the values array must be empty. This
+                                              array is replaced during a strategic
+                                              merge patch.
+                                            items:
+                                              type: string
+                                            type: array
+                                        required:
+                                        - key
+                                        - operator
+                                        type: object
+                                      type: array
+                                    matchLabels:
+                                      additionalProperties:
+                                        type: string
+                                      description: matchLabels is a map of {key,value}
+                                        pairs. A single {key,value} in the matchLabels
+                                        map is equivalent to an element of matchExpressions,
+                                        whose key field is "key", the operator is
+                                        "In", and the values array contains only "value".
+                                        The requirements are ANDed.
+                                      type: object
+                                  type: object
+                              required:
+                              - name
+                              type: object
+                          required:
+                          - current
+                          - metric
+                          type: object
+                        object:
+                          description: object refers to a metric describing a single
+                            kubernetes object (for example, hits-per-second on an
+                            Ingress object).
+                          properties:
+                            current:
+                              description: current contains the current value for
+                                the given metric
+                              properties:
+                                averageUtilization:
+                                  description: currentAverageUtilization is the current
+                                    value of the average of the resource metric across
+                                    all relevant pods, represented as a percentage
+                                    of the requested value of the resource for the
+                                    pods.
+                                  format: int32
+                                  type: integer
+                                averageValue:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  description: averageValue is the current value of
+                                    the average of the metric across all relevant
+                                    pods (as a quantity)
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                value:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  description: value is the current value of the metric
+                                    (as a quantity).
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                              type: object
+                            describedObject:
+                              description: CrossVersionObjectReference contains enough
+                                information to let you identify the referred resource.
+                              properties:
+                                apiVersion:
+                                  description: API version of the referent
+                                  type: string
+                                kind:
+                                  description: 'Kind of the referent; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds"'
+                                  type: string
+                                name:
+                                  description: 'Name of the referent; More info: http://kubernetes.io/docs/user-guide/identifiers#names'
+                                  type: string
+                              required:
+                              - kind
+                              - name
+                              type: object
+                            metric:
+                              description: metric identifies the target metric by
+                                name and selector
+                              properties:
+                                name:
+                                  description: name is the name of the given metric
+                                  type: string
+                                selector:
+                                  description: selector is the string-encoded form
+                                    of a standard kubernetes label selector for the
+                                    given metric When set, it is passed as an additional
+                                    parameter to the metrics server for more specific
+                                    metrics scoping. When unset, just the metricName
+                                    will be used to gather metrics.
+                                  properties:
+                                    matchExpressions:
+                                      description: matchExpressions is a list of label
+                                        selector requirements. The requirements are
+                                        ANDed.
+                                      items:
+                                        description: A label selector requirement
+                                          is a selector that contains values, a key,
+                                          and an operator that relates the key and
+                                          values.
+                                        properties:
+                                          key:
+                                            description: key is the label key that
+                                              the selector applies to.
+                                            type: string
+                                          operator:
+                                            description: operator represents a key's
+                                              relationship to a set of values. Valid
+                                              operators are In, NotIn, Exists and
+                                              DoesNotExist.
+                                            type: string
+                                          values:
+                                            description: values is an array of string
+                                              values. If the operator is In or NotIn,
+                                              the values array must be non-empty.
+                                              If the operator is Exists or DoesNotExist,
+                                              the values array must be empty. This
+                                              array is replaced during a strategic
+                                              merge patch.
+                                            items:
+                                              type: string
+                                            type: array
+                                        required:
+                                        - key
+                                        - operator
+                                        type: object
+                                      type: array
+                                    matchLabels:
+                                      additionalProperties:
+                                        type: string
+                                      description: matchLabels is a map of {key,value}
+                                        pairs. A single {key,value} in the matchLabels
+                                        map is equivalent to an element of matchExpressions,
+                                        whose key field is "key", the operator is
+                                        "In", and the values array contains only "value".
+                                        The requirements are ANDed.
+                                      type: object
+                                  type: object
+                              required:
+                              - name
+                              type: object
+                          required:
+                          - current
+                          - describedObject
+                          - metric
+                          type: object
+                        pods:
+                          description: pods refers to a metric describing each pod
+                            in the current scale target (for example, transactions-processed-per-second).  The
+                            values will be averaged together before being compared
+                            to the target value.
+                          properties:
+                            current:
+                              description: current contains the current value for
+                                the given metric
+                              properties:
+                                averageUtilization:
+                                  description: currentAverageUtilization is the current
+                                    value of the average of the resource metric across
+                                    all relevant pods, represented as a percentage
+                                    of the requested value of the resource for the
+                                    pods.
+                                  format: int32
+                                  type: integer
+                                averageValue:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  description: averageValue is the current value of
+                                    the average of the metric across all relevant
+                                    pods (as a quantity)
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                value:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  description: value is the current value of the metric
+                                    (as a quantity).
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                              type: object
+                            metric:
+                              description: metric identifies the target metric by
+                                name and selector
+                              properties:
+                                name:
+                                  description: name is the name of the given metric
+                                  type: string
+                                selector:
+                                  description: selector is the string-encoded form
+                                    of a standard kubernetes label selector for the
+                                    given metric When set, it is passed as an additional
+                                    parameter to the metrics server for more specific
+                                    metrics scoping. When unset, just the metricName
+                                    will be used to gather metrics.
+                                  properties:
+                                    matchExpressions:
+                                      description: matchExpressions is a list of label
+                                        selector requirements. The requirements are
+                                        ANDed.
+                                      items:
+                                        description: A label selector requirement
+                                          is a selector that contains values, a key,
+                                          and an operator that relates the key and
+                                          values.
+                                        properties:
+                                          key:
+                                            description: key is the label key that
+                                              the selector applies to.
+                                            type: string
+                                          operator:
+                                            description: operator represents a key's
+                                              relationship to a set of values. Valid
+                                              operators are In, NotIn, Exists and
+                                              DoesNotExist.
+                                            type: string
+                                          values:
+                                            description: values is an array of string
+                                              values. If the operator is In or NotIn,
+                                              the values array must be non-empty.
+                                              If the operator is Exists or DoesNotExist,
+                                              the values array must be empty. This
+                                              array is replaced during a strategic
+                                              merge patch.
+                                            items:
+                                              type: string
+                                            type: array
+                                        required:
+                                        - key
+                                        - operator
+                                        type: object
+                                      type: array
+                                    matchLabels:
+                                      additionalProperties:
+                                        type: string
+                                      description: matchLabels is a map of {key,value}
+                                        pairs. A single {key,value} in the matchLabels
+                                        map is equivalent to an element of matchExpressions,
+                                        whose key field is "key", the operator is
+                                        "In", and the values array contains only "value".
+                                        The requirements are ANDed.
+                                      type: object
+                                  type: object
+                              required:
+                              - name
+                              type: object
+                          required:
+                          - current
+                          - metric
+                          type: object
+                        resource:
+                          description: resource refers to a resource metric (such
+                            as those specified in requests and limits) known to Kubernetes
+                            describing each pod in the current scale target (e.g.
+                            CPU or memory). Such metrics are built in to Kubernetes,
+                            and have special scaling options on top of those available
+                            to normal per-pod metrics using the "pods" source.
+                          properties:
+                            current:
+                              description: current contains the current value for
+                                the given metric
+                              properties:
+                                averageUtilization:
+                                  description: currentAverageUtilization is the current
+                                    value of the average of the resource metric across
+                                    all relevant pods, represented as a percentage
+                                    of the requested value of the resource for the
+                                    pods.
+                                  format: int32
+                                  type: integer
+                                averageValue:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  description: averageValue is the current value of
+                                    the average of the metric across all relevant
+                                    pods (as a quantity)
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                                value:
+                                  anyOf:
+                                  - type: integer
+                                  - type: string
+                                  description: value is the current value of the metric
+                                    (as a quantity).
+                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                  x-kubernetes-int-or-string: true
+                              type: object
+                            name:
+                              description: Name is the name of the resource in question.
+                              type: string
+                          required:
+                          - current
+                          - name
+                          type: object
+                        type:
+                          description: 'type is the type of metric source.  It will
+                            be one of "ContainerResource", "External", "Object", "Pods"
+                            or "Resource", each corresponds to a matching field in
+                            the object. Note: "ContainerResource" type is available
+                            on when the feature-gate HPAContainerMetrics is enabled'
+                          type: string
+                      required:
+                      - type
+                      type: object
+                    type: array
+                  currentReplicas:
+                    description: currentReplicas is current number of replicas of
+                      pods managed by this autoscaler, as last seen by the autoscaler.
+                    format: int32
+                    type: integer
+                  desiredReplicas:
+                    description: desiredReplicas is the desired number of replicas
+                      of pods managed by this autoscaler, as last calculated by the
+                      autoscaler.
+                    format: int32
+                    type: integer
+                  lastScaleTime:
+                    description: lastScaleTime is the last time the HorizontalPodAutoscaler
+                      scaled the number of pods, used by the autoscaler to control
+                      how often the number of pods is changed.
+                    format: date-time
+                    type: string
+                  observedGeneration:
+                    description: observedGeneration is the most recent generation
+                      observed by this autoscaler.
+                    format: int64
+                    type: integer
+                required:
+                - conditions
+                - currentReplicas
+                - desiredReplicas
+                type: object
+              labelselector:
+                type: string
+              replicas:
+                description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
+                  of cluster Important: Run "make" to regenerate code after modifying
+                  this file'
+                format: int32
+                type: integer
+              serviceStatus:
+                description: Status of the Status Service created and managed by it
+                properties:
+                  conditions:
+                    description: Current service state
+                    items:
+                      description: "Condition contains details for one aspect of the
+                        current state of this API Resource. --- This struct is intended
+                        for direct use as an array at the field path .status.conditions.
+                        \ For example, type FooStatus struct{     // Represents the
+                        observations of a foo's current state.     // Known .status.conditions.type
+                        are: \"Available\", \"Progressing\", and \"Degraded\"     //
+                        +patchMergeKey=type     // +patchStrategy=merge     // +listType=map
+                        \    // +listMapKey=type     Conditions []metav1.Condition
+                        `json:\"conditions,omitempty\" patchStrategy:\"merge\" patchMergeKey:\"type\"
+                        protobuf:\"bytes,1,rep,name=conditions\"` \n     // other
+                        fields }"
+                      properties:
+                        lastTransitionTime:
+                          description: lastTransitionTime is the last time the condition
+                            transitioned from one status to another. This should be
+                            when the underlying condition changed.  If that is not
+                            known, then using the time when the API field changed
+                            is acceptable.
+                          format: date-time
+                          type: string
+                        message:
+                          description: message is a human readable message indicating
+                            details about the transition. This may be an empty string.
+                          maxLength: 32768
+                          type: string
+                        observedGeneration:
+                          description: observedGeneration represents the .metadata.generation
+                            that the condition was set based upon. For instance, if
+                            .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration
+                            is 9, the condition is out of date with respect to the
+                            current state of the instance.
+                          format: int64
+                          minimum: 0
+                          type: integer
+                        reason:
+                          description: reason contains a programmatic identifier indicating
+                            the reason for the condition's last transition. Producers
+                            of specific condition types may define expected values
+                            and meanings for this field, and whether the values are
+                            considered a guaranteed API. The value should be a CamelCase
+                            string. This field may not be empty.
+                          maxLength: 1024
+                          minLength: 1
+                          pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                          type: string
+                        status:
+                          description: status of the condition, one of True, False,
+                            Unknown.
+                          enum:
+                          - "True"
+                          - "False"
+                          - Unknown
+                          type: string
+                        type:
+                          description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                            --- Many .condition.type values are consistent across
+                            resources like Available, but because arbitrary conditions
+                            can be useful (see .node.status.conditions), the ability
+                            to deconflict is important. The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                          maxLength: 316
+                          pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                          type: string
+                      required:
+                      - lastTransitionTime
+                      - message
+                      - reason
+                      - status
+                      - type
+                      type: object
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - type
+                    x-kubernetes-list-type: map
+                  loadBalancer:
+                    description: LoadBalancer contains the current status of the load-balancer,
+                      if one is present.
+                    properties:
+                      ingress:
+                        description: Ingress is a list containing ingress points for
+                          the load-balancer. Traffic intended for the service should
+                          be sent to these ingress points.
+                        items:
+                          description: 'LoadBalancerIngress represents the status
+                            of a load-balancer ingress point: traffic intended for
+                            the service should be sent to an ingress point.'
+                          properties:
+                            hostname:
+                              description: Hostname is set for load-balancer ingress
+                                points that are DNS based (typically AWS load-balancers)
+                              type: string
+                            ip:
+                              description: IP is set for load-balancer ingress points
+                                that are IP based (typically GCE or OpenStack load-balancers)
+                              type: string
+                            ports:
+                              description: Ports is a list of records of service ports
+                                If used, every port defined in the service should
+                                have an entry in it
+                              items:
+                                properties:
+                                  error:
+                                    description: 'Error is to record the problem with
+                                      the service port The format of the error shall
+                                      comply with the following rules: - built-in
+                                      error values shall be specified in this file
+                                      and those shall use   CamelCase names - cloud
+                                      provider specific error values must have names
+                                      that comply with the   format foo.example.com/CamelCase.
+                                      --- The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)'
+                                    maxLength: 316
+                                    pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                                    type: string
+                                  port:
+                                    description: Port is the port number of the service
+                                      port of which status is recorded here
+                                    format: int32
+                                    type: integer
+                                  protocol:
+                                    default: TCP
+                                    description: 'Protocol is the protocol of the
+                                      service port of which status is recorded here
+                                      The supported values are: "TCP", "UDP", "SCTP"'
+                                    type: string
+                                required:
+                                - port
+                                - protocol
+                                type: object
+                              type: array
+                              x-kubernetes-list-type: atomic
+                          type: object
+                        type: array
+                    type: object
+                type: object
+            required:
+            - deploymentStatus
+            - hpaStatus
+            - serviceStatus
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

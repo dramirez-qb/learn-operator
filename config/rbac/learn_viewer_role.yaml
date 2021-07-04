@@ -1,0 +1,20 @@
+# permissions for end users to view learns.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: learn-viewer-role
+rules:
+- apiGroups:
+  - devops.dxas90
+  resources:
+  - learns
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - devops.dxas90
+  resources:
+  - learns/status
+  verbs:
+  - get

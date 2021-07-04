@@ -1,0 +1,77 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bobr-status
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bobr-status
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 2
+  template:
+    metadata:
+      labels:
+        app: bobr-status
+    spec:
+      containers:
+        - name: bobr-status
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: GIN_MODE
+              value: release
+          envFrom:
+            - configMapRef:
+                name: bobr-status-config
+          image: dxas90/bobr-status:v0.0.0
+          ports:
+            - name: web
+              containerPort: 8080 # line 12
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 10m
+              memory: 48Mi
+            requests:
+              cpu: 10m
+              memory: 48Mi
+          # https://blog.pipetail.io/posts/2020-05-04-most-common-mistakes-k8s/
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: web
+            initialDelaySeconds: 3
+            timeoutSeconds: 2
+            failureThreshold: 5
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /cache
+              name: cache-volume
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext:
+        fsGroup: 65534
+      serviceAccountName: k8s-bobr-status
+      restartPolicy: Always
+      volumes:
+        - name: cache-volume
+          emptyDir: {}
+status: {}

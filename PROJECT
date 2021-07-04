@@ -1,0 +1,37 @@
+domain: dxas90
+layout:
+- go.kubebuilder.io/v3
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}
+projectName: learn-operator
+repo: github.com/dxas90/learn-operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: dxas90
+  group: devops
+  kind: Learn
+  path: github.com/dxas90/learn-operator/api/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: dxas90
+  group: devops
+  kind: Status
+  path: github.com/dxas90/learn-operator/api/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: dxas90
+  group: devops
+  kind: Crypto
+  path: github.com/dxas90/learn-operator/api/v1alpha1
+  version: v1alpha1
+version: "3"

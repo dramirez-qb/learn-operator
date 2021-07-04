@@ -1,0 +1,275 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: |-
+      [
+        {
+          "apiVersion": "devops.dxas90/v1alpha1",
+          "kind": "Crypto",
+          "metadata": {
+            "name": "crypto-sample"
+          },
+          "spec": {
+            "foo": "bar"
+          }
+        },
+        {
+          "apiVersion": "devops.dxas90/v1alpha1",
+          "kind": "Learn",
+          "metadata": {
+            "name": "learn-sample"
+          },
+          "spec": {
+            "foo": "bar"
+          }
+        },
+        {
+          "apiVersion": "devops.dxas90/v1alpha1",
+          "kind": "Status",
+          "metadata": {
+            "name": "status-sample"
+          },
+          "spec": {
+            "foo": "bar"
+          }
+        }
+      ]
+    capabilities: Basic Install
+    operators.operatorframework.io/builder: operator-sdk-v1.8.0+git
+    operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
+  name: learn-operator.v0.0.1
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - kind: Crypto
+      name: cryptoes.devops.dxas90
+      version: v1alpha1
+    - description: Learn is the Schema for the learns API
+      displayName: Learn
+      kind: Learn
+      name: learns.devops.dxas90
+      version: v1alpha1
+    - description: Status is the Schema for the statuses API
+      displayName: Status
+      kind: Status
+      name: statuses.devops.dxas90
+      version: v1alpha1
+  description: learn
+  displayName: learn
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      clusterPermissions:
+      - rules:
+        - apiGroups:
+          - devops.dxas90
+          resources:
+          - cryptoes
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - devops.dxas90
+          resources:
+          - cryptoes/finalizers
+          verbs:
+          - update
+        - apiGroups:
+          - devops.dxas90
+          resources:
+          - cryptoes/status
+          verbs:
+          - get
+          - patch
+          - update
+        - apiGroups:
+          - devops.dxas90
+          resources:
+          - learns
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - devops.dxas90
+          resources:
+          - learns/finalizers
+          verbs:
+          - update
+        - apiGroups:
+          - devops.dxas90
+          resources:
+          - learns/status
+          verbs:
+          - get
+          - patch
+          - update
+        - apiGroups:
+          - devops.dxas90
+          resources:
+          - statuses
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - devops.dxas90
+          resources:
+          - statuses/finalizers
+          verbs:
+          - update
+        - apiGroups:
+          - devops.dxas90
+          resources:
+          - statuses/status
+          verbs:
+          - get
+          - patch
+          - update
+        - apiGroups:
+          - authentication.k8s.io
+          resources:
+          - tokenreviews
+          verbs:
+          - create
+        - apiGroups:
+          - authorization.k8s.io
+          resources:
+          - subjectaccessreviews
+          verbs:
+          - create
+        serviceAccountName: learn-operator-controller-manager
+      deployments:
+      - name: learn-operator-controller-manager
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              control-plane: controller-manager
+          strategy: {}
+          template:
+            metadata:
+              labels:
+                control-plane: controller-manager
+            spec:
+              containers:
+              - args:
+                - --secure-listen-address=0.0.0.0:8443
+                - --upstream=http://127.0.0.1:8080/
+                - --logtostderr=true
+                - --v=10
+                image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+                name: kube-rbac-proxy
+                ports:
+                - containerPort: 8443
+                  name: https
+                resources: {}
+              - args:
+                - --health-probe-bind-address=:8081
+                - --metrics-bind-address=127.0.0.1:8080
+                - --leader-elect
+                command:
+                - /manager
+                image: dxas90/learn-controller:latest
+                livenessProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 8081
+                  initialDelaySeconds: 15
+                  periodSeconds: 20
+                name: manager
+                readinessProbe:
+                  httpGet:
+                    path: /readyz
+                    port: 8081
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                resources:
+                  limits:
+                    cpu: 100m
+                    memory: 30Mi
+                  requests:
+                    cpu: 100m
+                    memory: 20Mi
+                securityContext:
+                  allowPrivilegeEscalation: false
+              securityContext:
+                runAsNonRoot: true
+              serviceAccountName: learn-operator-controller-manager
+              terminationGracePeriodSeconds: 10
+      permissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - coordination.k8s.io
+          resources:
+          - leases
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+          - patch
+        serviceAccountName: learn-operator-controller-manager
+    strategy: deployment
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - learn
+  - k8s
+  - dummy
+  links:
+  - name: Learn Operator
+    url: https://learn-operator.domain
+  maintainers:
+  - email: dxas90@gmail.com
+    name: daniel
+  maturity: alpha
+  provider:
+    name: dxas90
+  version: 0.0.1

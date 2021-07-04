@@ -1,0 +1,62 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: learn
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  tls:
+    - hosts:
+        - www.dxas90.xyz
+      secretName: www-dxas90-xyz-prod
+    - hosts:
+        - ultimatebits.dxas90.xyz
+      secretName: ultimatebits-dxas90-xyz-prod
+    - hosts:
+        - perfectbytes.dxas90.xyz
+      secretName: perfectbytes-dxas90-xyz-prod
+  rules:
+    - host: www.dxas90.xyz
+      http:
+        paths:
+          # - path: /geo
+          #   pathType: ImplementationSpecific
+          #   backend:
+          #     serviceName: gitops-learn
+          #     servicePort: aweb
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              serviceName: learn
+              servicePort: web
+    - host: ultimatebits.dxas90.xyz
+      http:
+        paths:
+          # - path: /geo
+          #   pathType: ImplementationSpecific
+          #   backend:
+          #     serviceName: gitops-learn
+          #     servicePort: aweb
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              serviceName: learn
+              servicePort: web
+    - host: perfectbytes.dxas90.xyz
+      http:
+        paths:
+          # - path: /geo
+          #   pathType: ImplementationSpecific
+          #   backend:
+          #     serviceName: gitops-learn
+          #     servicePort: aweb
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              serviceName: learn
+              servicePort: web

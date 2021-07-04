@@ -1,0 +1,59 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+  name: learn-operator.v0.0.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - description: Crypto is the Schema for the cryptoes API
+      displayName: Crypto
+      kind: Crypto
+      name: cryptos.devops.dxas90
+      version: v1alpha1
+    - description: Learn is the Schema for the learns API
+      displayName: Learn
+      kind: Learn
+      name: learns.devops.dxas90
+      version: v1alpha1
+    - description: Status is the Schema for the statuses API
+      displayName: Status
+      kind: Status
+      name: statuses.devops.dxas90
+      version: v1alpha1
+  description: learn
+  displayName: learn
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - learn
+  - k8s
+  - dummy
+  links:
+  - name: Learn Operator
+    url: https://learn-operator.domain
+  maintainers:
+  - email: dxas90@gmail.com
+    name: daniel
+  maturity: alpha
+  provider:
+    name: dxas90
+  version: 0.0.0

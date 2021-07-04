@@ -1,0 +1,9 @@
+apiVersion: devops.dxas90/v1alpha1
+kind: Learn
+metadata:
+  name: learn-sample
+spec:
+  # Add fields here
+  foo: bar
+  replicas: 2
+  image: dxas90/learn:latest
